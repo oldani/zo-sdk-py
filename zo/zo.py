@@ -1,33 +1,34 @@
-from typing import *
 import asyncio
-import os
-import json
 import inspect
-from datetime import datetime, timezone as tz
-from anchorpy import Idl, Program, Provider, Context, Wallet
-from anchorpy.error import AccountDoesNotExistError
-from solana.publickey import PublicKey
-from solana.keypair import Keypair
-from solana.transaction import TransactionInstruction, Transaction, TransactionSignature
-from solana.rpc.commitment import Commitment, Confirmed
-from solana.rpc.async_api import AsyncClient
-from solana.rpc.types import TxOpts
-from solana.sysvar import SYSVAR_RENT_PUBKEY
-from solana.system_program import SYS_PROGRAM_ID
-from spl.token.instructions import get_associated_token_address
-from spl.token.constants import TOKEN_PROGRAM_ID
+import os
+from datetime import datetime
+from datetime import timezone as tz
+from typing import *
 
-from . import util, types, config
-from .config import configs, Config
+from anchorpy import Context, Idl, Program, Provider, Wallet
+from anchorpy.error import AccountDoesNotExistError
+from solana.keypair import Keypair
+from solana.publickey import PublicKey
+from solana.rpc.async_api import AsyncClient
+from solana.rpc.commitment import Commitment, Confirmed
+from solana.rpc.types import TxOpts
+from solana.system_program import SYS_PROGRAM_ID
+from solana.sysvar import SYSVAR_RENT_PUBKEY
+from solana.transaction import Transaction, TransactionInstruction, TransactionSignature
+from spl.token.constants import TOKEN_PROGRAM_ID
+from spl.token.instructions import get_associated_token_address
+
+from . import config, types, util
+from .config import Config, configs
+from .dex import Market, Order, Orderbook
 from .types import (
-    Side,
-    OrderType,
     CollateralInfo,
     FundingInfo,
     MarketInfo,
+    OrderType,
     PositionInfo,
+    Side,
 )
-from .dex import Market, Orderbook, Order
 
 T = TypeVar("T")
 
@@ -174,7 +175,7 @@ class Zo:
 
         idl_path = os.path.join(os.path.dirname(__file__), "idl.json")
         with open(idl_path) as f:
-            raw_idl = json.load(f)
+            raw_idl = f.read()
 
         idl = Idl.from_json(raw_idl)
         conn = AsyncClient(url)
